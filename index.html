@@ -3,810 +3,324 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ВК ФЕНИКС — Волейбольная команда · Нижний Новгород</title>
-<meta name="description" content="Мужская и женская волейбольная команда ВК Феникс, школа №91, Нижний Новгород">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Дашборд — ВК Феникс</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --orange:#ff6b1a;
-  --orange-2:#ff8c42;
-  --orange-deep:#c63a00;
-  --bg:#07070c;
-  --border:rgba(255,255,255,.09);
-  --border-hi:rgba(255,107,26,.5);
-  --text:#ffffff;
-  --text-2:rgba(255,255,255,.7);
-  --muted:#8a8aa0;
+*{box-sizing:border-box}
+body{font-family:'Manrope',system-ui,sans-serif;background:#07070c;color:#fff;margin:0;padding:24px;min-height:100vh;font-size:15px}
+h1{font-size:1.6rem;margin:0 0 24px;background:linear-gradient(135deg,#ff8c42,#ff6b1a);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:.95rem;text-transform:uppercase;letter-spacing:.15em;color:#8a8aa0;margin:0 0 16px;font-weight:800}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:22px;margin-bottom:16px}
+input,button,textarea,select{font:inherit;padding:11px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#13131c;color:#fff;outline:none;transition:border-color .2s;width:100%}
+input:focus,textarea:focus,select:focus{border-color:#ff6b1a}
+textarea{resize:vertical;min-height:70px;font-family:inherit;line-height:1.5}
+select{cursor:pointer}
+button{background:linear-gradient(135deg,#ff6b1a,#c63a00);border:none;cursor:pointer;font-weight:800;color:#fff;padding:12px 22px;transition:all .2s;width:auto}
+button:hover{transform:translateY(-2px);box-shadow:0 10px 24px -8px #ff6b1a}
+button.ghost{background:transparent;border:1px solid rgba(255,255,255,.18);color:#fff}
+button.danger{background:linear-gradient(135deg,#ff2e63,#c60038)}
+button.add{background:transparent;border:1.5px dashed rgba(255,255,255,.25);color:#8a8aa0;margin-top:14px;width:100%;padding:14px}
+button.add:hover{background:rgba(255,107,26,.1);border-color:#ff6b1a;color:#ff8c42;transform:none;box-shadow:none}
+.row{display:grid;grid-template-columns:80px 1fr 1fr 44px;gap:8px;margin-bottom:8px}
+.row button{padding:0;font-size:1.15rem;height:auto}
+.status{padding:8px 16px;border-radius:100px;font-size:.82rem;font-weight:800;display:inline-block;backdrop-filter:blur(10px)}
+.status.ok{background:rgba(40,200,100,.18);color:#4de08a;border:1px solid rgba(60,200,100,.35)}
+.status.err{background:rgba(255,46,99,.18);color:#ff5678;border:1px solid rgba(255,46,99,.35)}
+.hidden{display:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:10px 18px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#8a8aa0;cursor:pointer;font-weight:800;font-size:.85rem;transition:all .2s;text-transform:uppercase;letter-spacing:.1em}
+.tab.active{background:#ff6b1a;color:#fff;border-color:#ff6b1a}
+.tab:hover:not(.active){color:#fff;border-color:rgba(255,107,26,.4)}
+.news-item{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px;margin-bottom:12px;background:rgba(255,255,255,.02);position:relative}
+.news-item.match{border-color:rgba(255,107,26,.4);background:rgba(255,107,26,.06)}
+.news-item .news-head{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.news-item .news-head select{width:auto;min-width:130px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:.75rem;color:#8a8aa0;text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:6px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .row{grid-template-columns:60px 1fr 44px;gap:6px}
+  .row .pos-input{grid-column:1/-1}
 }
-html{scroll-behavior:smooth}
-body{
-  font-family:'Manrope',system-ui,-apple-system,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  line-height:1.6;
-  font-weight:500;
-  font-size:17px;
-}
-#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-
-/* ===== BG GLOW — с параллаксом ===== */
-.bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.bg-glow .blob{
-  position:absolute;border-radius:50%;
-  filter:blur(100px);
-  will-change:transform;
-  transition:transform .12s linear;
-}
-.blob-1{
-  width:75vw;height:75vw;max-width:1000px;max-height:1000px;
-  background:radial-gradient(circle,rgba(255,107,26,.5) 0%,transparent 65%);
-  top:-25vw;left:-20vw;
-}
-.blob-2{
-  width:65vw;height:65vw;max-width:900px;max-height:900px;
-  background:radial-gradient(circle,rgba(255,107,26,.32) 0%,transparent 65%);
-  bottom:-25vw;right:-20vw;
-}
-.blob-3{
-  width:50vw;height:50vw;max-width:700px;max-height:700px;
-  background:radial-gradient(circle,rgba(255,60,20,.18) 0%,transparent 65%);
-  top:40%;left:50%;transform:translate(-50%,-50%);
-}
-main,header,footer{position:relative;z-index:2}
-
-#progress{
-  position:fixed;top:0;left:0;height:4px;width:0;z-index:100;
-  background:linear-gradient(90deg,var(--orange),#fff);
-  box-shadow:0 0 24px var(--orange);
-  transition:width .08s linear;
-}
-
-header{position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 24px;transition:all .35s ease}
-header.scrolled{
-  background:rgba(7,7,12,.85);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-bottom:1px solid var(--border);
-  padding:10px 24px;
-}
-nav{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:1.2rem;letter-spacing:-.02em;white-space:nowrap;color:#fff}
-.logo em{font-style:normal;background:linear-gradient(135deg,var(--orange) 30%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.logo small{display:block;font-size:.62rem;letter-spacing:.34em;color:var(--muted);font-weight:700;margin-top:3px}
-.nav-links{display:flex;gap:32px;list-style:none}
-.nav-links a{color:var(--text-2);text-decoration:none;font-size:.95rem;font-weight:700;transition:color .3s;position:relative;letter-spacing:-.01em}
-.nav-links a:hover{color:#fff}
-.nav-links a::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:2.5px;background:var(--orange);transition:width .3s;border-radius:2px}
-.nav-links a:hover::after{width:100%}
-.nav-socials{display:flex;gap:10px}
-.nav-socials a{
-  width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
-  background:rgba(255,255,255,.05);border:1.5px solid var(--border);color:#fff;
-  transition:all .3s;text-decoration:none;
-}
-.nav-socials a:hover{background:var(--orange);border-color:var(--orange);transform:translateY(-2px);box-shadow:0 10px 24px -8px var(--orange)}
-.nav-socials svg{width:19px;height:19px;fill:currentColor}
-@media(max-width:900px){.nav-links,.nav-socials{display:none}}
-
-.hero{
-  min-height:100vh;min-height:100dvh;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;padding:130px 24px 90px;position:relative;
-}
-.hero > *{position:relative;z-index:3}
-.hero-tag{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:11px 22px;border-radius:100px;
-  background:rgba(255,107,26,.14);border:1.5px solid rgba(255,107,26,.4);
-  font-size:.78rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
-  color:#fff;margin-bottom:34px;
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  animation:fadeUp 1s .1s both;
-}
-.hero-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px var(--orange);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
-.hero h1{
-  font-family:'Unbounded',sans-serif;font-weight:900;
-  font-size:clamp(3.2rem,11vw,9rem);line-height:.88;letter-spacing:-.05em;
-  margin-bottom:32px;color:#fff;
-  animation:fadeUp 1.2s .25s both;
-}
-.hero h1 span{text-shadow:0 4px 30px rgba(0,0,0,.65)}
-.hero h1 em{
-  display:block;font-style:normal;
-  background:linear-gradient(180deg,var(--orange-2) 0%,var(--orange) 50%,var(--orange-deep) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 6px 30px rgba(255,107,26,.55));
-}
-.hero-sub{
-  font-size:clamp(1.05rem,1.7vw,1.35rem);color:#fff;max-width:640px;
-  line-height:1.6;margin-bottom:48px;animation:fadeUp 1s .5s both;
-  font-weight:600;text-shadow:0 2px 12px rgba(0,0,0,.85),0 1px 4px rgba(0,0,0,.85);
-  background:rgba(255,255,255,.045);
-  backdrop-filter:blur(24px) saturate(180%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  padding:18px 28px;border-radius:18px;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 8px 32px -12px rgba(0,0,0,.6);
-}
-.hero-sub b{color:var(--orange-2);font-weight:900;text-shadow:0 0 20px rgba(255,107,26,.5)}
-.hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s .7s both}
-.btn{
-  padding:17px 34px;border-radius:100px;font-weight:800;font-size:.98rem;
-  text-decoration:none;display:inline-flex;align-items:center;gap:10px;
-  transition:all .3s;border:2px solid transparent;cursor:pointer;letter-spacing:-.01em;
-}
-.btn-primary{background:var(--orange);color:#fff;box-shadow:0 16px 40px -12px var(--orange)}
-.btn-primary:hover{background:#fff;color:var(--orange);transform:translateY(-3px);box-shadow:0 22px 50px -14px var(--orange)}
-.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.25);backdrop-filter:blur(10px)}
-.btn-ghost:hover{background:#fff;color:var(--bg);border-color:#fff;transform:translateY(-3px)}
-.scroll-hint{
-  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
-  font-size:.72rem;letter-spacing:.32em;color:var(--text-2);text-transform:uppercase;
-  font-weight:800;animation:fadeUp 1s 1s both;z-index:3;
-}
-.scroll-hint::after{content:'';display:block;width:2px;height:46px;margin:14px auto 0;background:linear-gradient(180deg,var(--orange),transparent);animation:scrollLine 2.2s infinite}
-@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-
-section{padding:120px 24px;position:relative}
-.container{max-width:1280px;margin:0 auto}
-.section-head{margin-bottom:64px;display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap}
-.section-num{font-family:'Unbounded',sans-serif;font-size:.85rem;font-weight:800;color:var(--orange);letter-spacing:.22em;text-transform:uppercase}
-.section-title{font-family:'Unbounded',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.8rem);letter-spacing:-.035em;line-height:1.02;flex:1;min-width:280px;color:#fff}
-.section-title em{font-style:normal;background:linear-gradient(135deg,var(--orange-2) 10%,var(--orange) 70%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.section-desc{color:var(--text-2);font-size:1.1rem;max-width:620px;line-height:1.7;margin-top:-28px;margin-bottom:56px;font-weight:500}
-
-.about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
-.about-card{
-  padding:38px 32px;border-radius:26px;
-  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
-  border:2px solid var(--border);position:relative;overflow:hidden;
-  transition:all .4s cubic-bezier(.2,.8,.2,1);
-}
-.about-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,rgba(255,107,26,.25),transparent 60%);opacity:0;transition:opacity .4s}
-.about-card:hover{transform:translateY(-8px);border-color:var(--border-hi);box-shadow:0 30px 60px -30px var(--orange)}
-.about-card:hover::before{opacity:1}
-.about-card h3{
-  font-family:'Unbounded',sans-serif;font-size:3.2rem;font-weight:900;
-  background:linear-gradient(135deg,var(--orange-2),var(--orange));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:12px;letter-spacing:-.04em;line-height:1;position:relative;
-}
-.about-card p{color:#fff;font-size:1.02rem;line-height:1.5;font-weight:700;position:relative}
-
-#news{background:linear-gradient(180deg,transparent,rgba(255,107,26,.045),transparent)}
-.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
-@media(max-width:500px){.news-grid{grid-template-columns:1fr}}
-.news-card{
-  padding:30px 28px;border-radius:24px;
-  background:rgba(255,255,255,.035);
-  backdrop-filter:blur(24px) saturate(180%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  border:1.5px solid rgba(255,255,255,.12);
-  position:relative;overflow:hidden;
-  transition:all .4s cubic-bezier(.2,.8,.2,1);
-  display:flex;flex-direction:column;
-  box-shadow:0 8px 32px -12px rgba(0,0,0,.5);
-}
-.news-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--orange),transparent);opacity:.6;transition:opacity .4s}
-.news-card:hover{
-  transform:translateY(-6px);
-  border-color:var(--border-hi);
-  background:rgba(255,255,255,.06);
-  box-shadow:0 30px 60px -25px rgba(255,107,26,.55),0 0 0 1px rgba(255,107,26,.15);
-}
-.news-card:hover::before{opacity:1}
-.news-card.match{
-  background:rgba(255,107,26,.07);
-  border-color:rgba(255,107,26,.28);
-}
-.news-card.match:hover{background:rgba(255,107,26,.12);border-color:rgba(255,107,26,.5)}
-.news-card.match::before{background:linear-gradient(90deg,var(--orange),var(--orange-2));opacity:1}
-.news-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
-.news-badge{padding:6px 14px;border-radius:100px;font-size:.7rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--border)}
-.news-badge.match-badge{background:var(--orange);color:#fff;border-color:transparent;box-shadow:0 6px 18px -6px var(--orange)}
-.news-date{font-size:.82rem;font-weight:800;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-.news-title{font-family:'Unbounded',sans-serif;font-size:1.3rem;font-weight:800;line-height:1.25;letter-spacing:-.02em;margin-bottom:12px;color:#fff}
-.news-text{color:var(--text-2);font-size:1rem;line-height:1.6;font-weight:500;flex:1}
-.match-teams{font-family:'Unbounded',sans-serif;font-size:1.35rem;font-weight:900;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em;color:#fff}
-.match-teams em{font-style:normal;color:var(--orange-2)}
-.match-info{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);font-size:.92rem;color:#fff;font-weight:700}
-.match-info span{display:inline-flex;align-items:center;gap:8px;color:var(--text-2)}
-.match-info svg{width:16px;height:16px;fill:none;stroke:var(--orange);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.home-tag{display:inline-block;padding:4px 12px;border-radius:100px;font-size:.7rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-left:8px;vertical-align:middle}
-.home-tag.home{background:rgba(60,200,100,.15);color:#4de08a;border:1px solid rgba(60,200,100,.35)}
-.home-tag.away{background:rgba(255,200,60,.15);color:#ffd23f;border:1px solid rgba(255,200,60,.35)}
-.news-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);font-size:1rem;font-weight:600}
-
-.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
-.player{
-  position:relative;padding:30px 24px 26px;border-radius:22px;
-  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
-  border:1.5px solid var(--border);overflow:hidden;
-  transition:all .4s cubic-bezier(.2,.8,.2,1);
-}
-.player::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,rgba(255,107,26,.28),transparent 60%);opacity:0;transition:opacity .4s}
-.player:hover{transform:translateY(-8px);border-color:var(--border-hi);box-shadow:0 28px 50px -22px var(--orange)}
-.player:hover::before{opacity:1}
-.player-num{position:absolute;top:-14px;right:-6px;font-family:'Unbounded',sans-serif;font-size:6.5rem;font-weight:900;line-height:1;letter-spacing:-.06em;color:rgba(255,255,255,.055);transition:all .45s;pointer-events:none}
-.player:hover .player-num{color:rgba(255,107,26,.35);transform:scale(1.1) rotate(-6deg)}
-.player-name{position:relative;font-weight:800;font-size:1.15rem;margin-bottom:12px;line-height:1.25;color:#fff;letter-spacing:-.015em;padding-right:50px}
-.player-pos{position:relative;font-size:.82rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.14em;font-weight:800;display:inline-flex;align-items:center;gap:8px}
-.player-pos::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange)}
-
-.coach{
-  display:flex;align-items:center;gap:36px;padding:52px;border-radius:32px;
-  background:linear-gradient(135deg,var(--orange) 0%,var(--orange-deep) 100%);
-  color:#fff;position:relative;overflow:hidden;flex-wrap:wrap;
-  box-shadow:0 40px 80px -30px rgba(255,107,26,.7);
-}
-.coach::after{content:'';position:absolute;right:-100px;top:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.3),transparent 70%);filter:blur(20px)}
-.coach-icon{width:96px;height:96px;border-radius:26px;display:grid;place-items:center;background:rgba(0,0,0,.9);font-size:2.6rem;flex-shrink:0;position:relative;z-index:2;box-shadow:0 16px 40px -12px rgba(0,0,0,.5)}
-.coach-info{position:relative;z-index:2}
-.coach-info h3{font-family:'Unbounded',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:900;margin-bottom:10px;letter-spacing:-.025em;color:#fff}
-.coach-info p{color:rgba(255,255,255,.92);font-size:.92rem;text-transform:uppercase;letter-spacing:.18em;font-weight:800}
-
-footer{
-  padding:100px 24px 40px;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:blur(40px) saturate(160%);
-  -webkit-backdrop-filter:blur(40px) saturate(160%);
-  border-top:1px solid var(--border);
-  margin-top:60px;
-}
-.footer-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:56px;margin-bottom:60px}
-@media(max-width:820px){.footer-grid{grid-template-columns:1fr;gap:40px}}
-.footer-brand h3{font-family:'Unbounded',sans-serif;font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--orange-2) 20%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;letter-spacing:-.03em}
-.footer-brand p{color:var(--text-2);font-size:1rem;line-height:1.7;max-width:420px}
-.footer-col h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.22em;color:var(--muted);font-weight:800;margin-bottom:24px}
-.footer-col a{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none;font-size:1rem;margin-bottom:14px;transition:all .3s;font-weight:700}
-.footer-col a:hover{color:var(--orange-2);transform:translateX(5px)}
-.footer-col svg{width:22px;height:22px;fill:currentColor;flex-shrink:0}
-.footer-bottom{max-width:1280px;margin:0 auto;padding-top:36px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.88rem;font-weight:600}
-
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .9s cubic-bezier(.2,.8,.2,1)}
-.reveal.in{opacity:1;transform:translateY(0)}
+.checkbox{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 0}
+.checkbox input{width:auto;cursor:pointer;accent-color:#ff6b1a;transform:scale(1.2)}
+.section-block{display:none}
+.section-block.active{display:block}
+.save-bar{position:sticky;bottom:16px;background:rgba(7,7,12,.92);backdrop-filter:blur(14px);padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;z-index:20;margin-top:20px}
 </style>
 </head>
 <body>
 
-<div id="progress"></div>
-
-<div class="bg-glow">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
+<div class="top">
+  <h1>⚙️ ВК Феникс — Дашборд</h1>
+  <span id="status" class="status hidden"></span>
 </div>
 
-<canvas id="bg"></canvas>
+<div id="login" class="card">
+  <h2 style="margin-top:0">Вход</h2>
+  <input id="email" type="email" placeholder="Email администратора" style="max-width:320px; margin-bottom:10px;">
+  <input id="pass" type="password" placeholder="Пароль" style="max-width:320px; margin-bottom:12px;">
+  <button onclick="login()">Войти</button>
+</div>
 
-<header id="header">
-  <nav>
-    <div class="logo">ВК <em>ФЕНИКС</em><small>NN · SCHOOL 91</small></div>
-    <ul class="nav-links">
-      <li><a href="#about">О команде</a></li>
-      <li><a href="#news">Новости и игры</a></li>
-      <li><a href="#men">Мужская</a></li>
-      <li><a href="#women">Женская</a></li>
-      <li><a href="#coach">Тренер</a></li>
-    </ul>
-    <div class="nav-socials">
-      <a href="https://vk.ru/phoenix_school91nn" target="_blank" rel="noopener" aria-label="ВКонтакте">
-        <svg viewBox="0 0 24 24"><path d="M13.16 18.5c-6.3 0-9.9-4.3-10.05-11.5h3.16c.1 5.3 2.44 7.54 4.3 8v-8h2.98v4.57c1.83-.2 3.76-2.28 4.4-4.57h2.98c-.5 2.83-2.6 4.9-4.1 5.75 1.5.69 3.9 2.5 4.8 5.75h-3.28c-.72-2.22-2.5-3.94-4.9-4.18v4.18h-.29z"/></svg>
-      </a>
-      <a href="https://www.tiktok.com/@vk.phoenix91" target="_blank" rel="noopener" aria-label="TikTok">
-        <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 0 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5 2.59 2.59 0 0 1-2.59-2.59 2.59 2.59 0 0 1 3.28-2.48V9.63a5.78 5.78 0 0 0-.7-.04A5.79 5.79 0 0 0 4.07 15.4a5.79 5.79 0 0 0 5.79 5.79 5.79 5.79 0 0 0 5.79-5.79V9.01a7.35 7.35 0 0 0 4.28 1.37V7.29a4.28 4.28 0 0 1-3.33-1.47z"/></svg>
-      </a>
-    </div>
-  </nav>
-</header>
+<div id="panel" class="hidden">
+  <div class="tabs">
+    <div class="tab active" data-tab="news-tab">📰 Новости и игры</div>
+    <div class="tab" data-tab="teams-tab">🏐 Команды</div>
+    <div class="tab" data-tab="coach-tab">🏆 Тренер</div>
+  </div>
 
-<main>
-  <section class="hero">
-    <div class="hero-tag">Нижний Новгород · Школа №91</div>
-    <h1><span>ВК</span> <em>ФЕНИКС</em></h1>
-    <p class="hero-sub">Мужская и женская волейбольная команда. <b>Играем с огнём</b> — от первой подачи до победного очка.</p>
-    <div class="hero-cta">
-      <a href="#news" class="btn btn-primary">Новости и игры →</a>
-      <a href="https://vk.ru/phoenix_school91nn" target="_blank" rel="noopener" class="btn btn-ghost">Мы во ВКонтакте</a>
-    </div>
-    <div class="scroll-hint">Листайте вниз</div>
-  </section>
-
-  <section id="about">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="section-num">01 / О НАС</div>
-        <h2 class="section-title">Команда,<br><em>рождённая из огня</em></h2>
-      </div>
-      <p class="section-desc reveal">Феникс — это возрождение, сила и характер. Мы тренируемся в школе №91 Нижнего Новгорода и играем в двух составах — мужском и женском.</p>
-      <div class="about-grid">
-        <div class="about-card reveal"><h3>20</h3><p>Игроков в основном составе</p></div>
-        <div class="about-card reveal"><h3>2</h3><p>Команды: мужская и женская</p></div>
-        <div class="about-card reveal"><h3>91</h3><p>Школа, где мы тренируемся</p></div>
-        <div class="about-card reveal"><h3>∞</h3><p>Стремление к победе</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="news">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="section-num">02 / СОБЫТИЯ</div>
-        <h2 class="section-title">Новости <em>и игры</em></h2>
-      </div>
-      <p class="section-desc reveal">Анонсы ближайших матчей, результаты прошедших игр и свежие новости команды.</p>
-      <div class="news-grid" id="news-grid"></div>
-    </div>
-  </section>
-
-  <section id="men">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="section-num">03 / МУЖСКАЯ КОМАНДА</div>
-        <h2 class="section-title">Мужской <em>состав</em></h2>
-      </div>
-      <div class="players" id="men-grid"></div>
-    </div>
-  </section>
-
-  <section id="women">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="section-num">04 / ЖЕНСКАЯ КОМАНДА</div>
-        <h2 class="section-title">Женский <em>состав</em></h2>
-      </div>
-      <div class="players" id="women-grid"></div>
-    </div>
-  </section>
-
-  <section id="coach">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="section-num">05 / ТРЕНЕР</div>
-        <h2 class="section-title">Тот, кто <em>ведёт за собой</em></h2>
-      </div>
-      <div class="coach reveal">
-        <div class="coach-icon">🏆</div>
-        <div class="coach-info">
-          <h3 id="coach-name">Гунин А. С.</h3>
-          <p>Главный тренер · ВК Феникс</p>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <h3>ВК ФЕНИКС</h3>
-      <p>Волейбольная команда школы №91, Нижний Новгород. Мужской и женский составы. Следите за нашими победами в соцсетях.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Соцсети</h4>
-      <a href="https://vk.ru/phoenix_school91nn" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M13.16 18.5c-6.3 0-9.9-4.3-10.05-11.5h3.16c.1 5.3 2.44 7.54 4.3 8v-8h2.98v4.57c1.83-.2 3.76-2.28 4.4-4.57h2.98c-.5 2.83-2.6 4.9-4.1 5.75 1.5.69 3.9 2.5 4.8 5.75h-3.28c-.72-2.22-2.5-3.94-4.9-4.18v4.18h-.29z"/></svg>
-        ВКонтакте
-      </a>
-      <a href="https://www.tiktok.com/@vk.phoenix91" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 0 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5 2.59 2.59 0 0 1-2.59-2.59 2.59 2.59 0 0 1 3.28-2.48V9.63a5.78 5.78 0 0 0-.7-.04A5.79 5.79 0 0 0 4.07 15.4a5.79 5.79 0 0 0 5.79 5.79 5.79 5.79 0 0 0 5.79-5.79V9.01a7.35 7.35 0 0 0 4.28 1.37V7.29a4.28 4.28 0 0 1-3.33-1.47z"/></svg>
-        TikTok
-      </a>
-    </div>
-    <div class="footer-col">
-      <h4>Разделы</h4>
-      <a href="#about">О команде</a>
-      <a href="#news">Новости и игры</a>
-      <a href="#men">Мужская команда</a>
-      <a href="#women">Женская команда</a>
+  <div id="news-tab" class="section-block active">
+    <div class="card">
+      <h2>Новости и анонсы матчей</h2>
+      <p style="color:#8a8aa0;font-size:.9rem;margin:0 0 16px">
+        Добавляйте новости и игры — они сразу появятся на сайте. Свежие события показываются первыми.
+      </p>
+      <div id="news-list"></div>
+      <button class="add" onclick="addNews('news')">+ Добавить новость</button>
+      <button class="add" onclick="addNews('match')">+ Добавить матч</button>
     </div>
   </div>
-  <div class="footer-bottom">
-    <span>© <span id="year"></span> ВК Феникс · Нижний Новгород</span>
-    <span>Сделано с 🔥</span>
-  </div>
-</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <div id="teams-tab" class="section-block">
+    <div class="card">
+      <h2>🔵 Мужская команда</h2>
+      <div id="men-list"></div>
+      <button class="add" onclick="addPlayer('men')">+ Добавить игрока</button>
+    </div>
+    <div class="card">
+      <h2>🔴 Женская команда</h2>
+      <div id="women-list"></div>
+      <button class="add" onclick="addPlayer('women')">+ Добавить игрока</button>
+    </div>
+  </div>
+
+  <div id="coach-tab" class="section-block">
+    <div class="card">
+      <h2>🏆 Главный тренер</h2>
+      <div class="field">
+        <label>ФИО тренера</label>
+        <input id="coach" placeholder="Например: Гунин А. С.">
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button class="ghost" onclick="loadData()">↻ Перезагрузить</button>
+    <button onclick="save()">💾 Сохранить изменения</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const FALLBACK = {
-  coach: "Гунин А. С.",
-  men: [
-    {name:"Пенков Павел",number:3,position:"Связующий"},
-    {name:"Западнов Артем",number:5,position:"Доигровщик"},
-    {name:"Николаев Александр",number:7,position:"Центральный блокирующий"},
-    {name:"Немцев Николай",number:8,position:"Диагональный"},
-    {name:"Алексеев Георгий",number:10,position:"Доигровщик"},
-    {name:"Забелин Макар",number:11,position:"Центральный блокирующий"},
-    {name:"Лялин Матвей",number:15,position:"Доигровщик"},
-    {name:"Гузеев Андрей",number:17,position:"Либеро"}
-  ],
-  women: [
-    {name:"Насертдинова Самина",number:1,position:"Доигровщик"},
-    {name:"Хатямова Милана",number:3,position:"Связующий"},
-    {name:"Деньжонкова Вероника",number:4,position:"Диагональный"},
-    {name:"Сытина Анастасия",number:5,position:"Центральный блокирующий"},
-    {name:"Орлова Дарья",number:7,position:"Либеро"},
-    {name:"Рубцова Анастасия",number:8,position:"Доигровщик"},
-    {name:"Курохтина Ксения",number:11,position:"Либеро"},
-    {name:"Храмова Полина",number:14,position:"Диагональный"},
-    {name:"Мухтарова Алина",number:16,position:"Центральный блокирующий"},
-    {name:"Горбунова Екатерина",number:17,position:"Центральный блокирующий"},
-    {name:"Обидина Мария",number:19,position:"Диагональный"}
-  ],
-  news: [
-    {type:"match",date:"2025-11-20",title:"Товарищеский матч",opponent:"СШ №7",time:"18:00",place:"Спортзал школы №91",home:true,text:"Приходите поддержать нашу мужскую команду!"},
-    {type:"news",date:"2025-11-10",title:"Победа на городском турнире",text:"Женская команда ВК Феникс заняла первое место на турнире среди школ Нижнего Новгорода!"}
-  ]
-};
+// ВАШИ КЛЮЧИ SUPABASE
+const SUPABASE_URL = 'https://miczupcyeakbvyizqcfy.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_hMT9V3f03fmdr_CKCrT36w_zCDB8adx';
 
-function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function formatDate(iso){
-  if(!iso) return '';
-  const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-  const d = new Date(iso);
-  if(isNaN(d)) return iso;
-  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let state = {men:[], women:[], coach:"", news:[]};
+
+function setStatus(msg, ok=true){
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + (ok?'ok':'err');
+  el.classList.remove('hidden');
+  clearTimeout(setStatus.t);
+  setStatus.t = setTimeout(()=>el.classList.add('hidden'), 3000);
 }
-function renderGrid(id, players){
-  document.getElementById(id).innerHTML = players.map(p=>`
-    <div class="player reveal">
-      <div class="player-num">${String(p.number).padStart(2,'0')}</div>
-      <div class="player-name">${esc(p.name)}</div>
-      <div class="player-pos">${esc(p.position)}</div>
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.section-block').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab).classList.add('active');
+  };
+});
+
+// Вход
+async function login(){
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('pass').value.trim();
+  if(!email || !pass) return;
+  
+  setStatus('Входим...');
+  const { error } = await db.auth.signInWithPassword({ email, password: pass });
+  
+  if(error) {
+    setStatus('Ошибка: ' + error.message, false);
+  } else {
+    setStatus('Успешный вход!');
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('panel').classList.remove('hidden');
+    loadData();
+  }
+}
+
+// Рендер игроков
+function renderList(team){
+  const el = document.getElementById(team+'-list');
+  el.innerHTML = state[team].map((p,i)=>`
+    <div class="row">
+      <input type="number" value="${p.number}" onchange="update('${team}',${i},'number',this.value)" placeholder="#">
+      <input value="${esc(p.name)}" onchange="update('${team}',${i},'name',this.value)" placeholder="Имя">
+      <input class="pos-input" value="${esc(p.position)}" onchange="update('${team}',${i},'position',this.value)" placeholder="Амплуа">
+      <button class="danger" onclick="removePlayer('${team}',${i})">×</button>
     </div>`).join('');
 }
-function renderNews(items){
-  const grid = document.getElementById('news-grid');
-  if(!items || !items.length){
-    grid.innerHTML = '<div class="news-empty">Пока нет новостей и анонсов. Заглядывайте позже! 🔥</div>';
+function update(team, i, field, val){
+  state[team][i][field] = field === 'number' ? parseInt(val)||0 : val;
+}
+function addPlayer(team){
+  state[team].push({name:'', number:0, position:''});
+  renderList(team);
+}
+function removePlayer(team, i){
+  if(!confirm('Удалить игрока?')) return;
+  state[team].splice(i,1);
+  renderList(team);
+}
+
+// Рендер новостей
+function renderNews(){
+  const el = document.getElementById('news-list');
+  if(!state.news.length){
+    el.innerHTML = '<div style="text-align:center;color:#8a8aa0;padding:24px">Пока пусто. Добавьте первую новость или матч 👇</div>';
     return;
   }
-  const sorted = [...items].sort((a,b)=>{
-    const da = a.date ? new Date(a.date) : new Date(0);
-    const db = b.date ? new Date(b.date) : new Date(0);
+  const sorted = [...state.news].map((n,idx)=>({n,idx})).sort((a,b)=>{
+    const da = a.n.date ? new Date(a.n.date) : 0;
+    const db = b.n.date ? new Date(b.n.date) : 0;
     return db - da;
   });
-  grid.innerHTML = sorted.map(n=>{
-    if(n.type === 'match'){
-      const homeClass = n.home ? 'home' : 'away';
-      return `
-      <div class="news-card match reveal">
-        <div class="news-top">
-          <span class="news-badge match-badge">🎯 Матч</span>
-          <span class="news-date">${esc(formatDate(n.date))}</span>
+  el.innerHTML = sorted.map(({n,idx})=>{
+    const i = idx;
+    const isMatch = n.type === 'match';
+    return `
+      <div class="news-item ${isMatch?'match':''}">
+        <div class="news-head">
+          <select onchange="setNewsType(${i}, this.value)">
+            <option value="news" ${!isMatch?'selected':''}>📰 Новость</option>
+            <option value="match" ${isMatch?'selected':''}>🎯 Матч</option>
+          </select>
+          <input type="date" value="${esc(n.date||'')}" onchange="updateNews(${i},'date',this.value)" style="max-width:180px">
+          <button class="danger" style="margin-left:auto;padding:8px 14px;font-size:.9rem" onclick="removeNews(${i})">Удалить</button>
         </div>
-        <div class="match-teams">
-          ВК Феникс <em>vs</em> ${esc(n.opponent||'Соперник')}
-          <span class="home-tag ${homeClass}">${n.home?'Дом':'Выезд'}</span>
-        </div>
-        ${n.title ? `<div class="news-title">${esc(n.title)}</div>` : ''}
-        ${n.text ? `<div class="news-text">${esc(n.text)}</div>` : ''}
-        <div class="match-info">
-          ${n.time ? `<span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(n.time)}</span>` : ''}
-          ${n.place ? `<span><svg viewBox="0 0 24 24"><path d="M12 22s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>${esc(n.place)}</span>` : ''}
+        ${isMatch ? `
+          <div class="grid-2">
+            <div class="field"><label>Соперник</label>
+              <input value="${esc(n.opponent||'')}" onchange="updateNews(${i},'opponent',this.value)" placeholder="СШ №7"></div>
+            <div class="field"><label>Название (необязательно)</label>
+              <input value="${esc(n.title||'')}" onchange="updateNews(${i},'title',this.value)" placeholder="Товарищеский матч"></div>
+          </div>
+          <div class="grid-3">
+            <div class="field"><label>Время</label>
+              <input type="time" value="${esc(n.time||'')}" onchange="updateNews(${i},'time',this.value)"></div>
+            <div class="field" style="grid-column:span 2"><label>Место</label>
+              <input value="${esc(n.place||'')}" onchange="updateNews(${i},'place',this.value)" placeholder="Спортзал школы №91"></div>
+          </div>
+          <label class="checkbox">
+            <input type="checkbox" ${n.home?'checked':''} onchange="updateNews(${i},'home',this.checked)">
+            Домашний матч (иначе — выездной)
+          </label>
+        ` : `
+          <div class="field"><label>Заголовок</label>
+            <input value="${esc(n.title||'')}" onchange="updateNews(${i},'title',this.value)" placeholder="Победа на турнире"></div>
+        `}
+        <div class="field"><label>Описание</label>
+          <textarea onchange="updateNews(${i},'text',this.value)" placeholder="${isMatch?'Приходите поддержать команду!':'Текст новости…'}">${esc(n.text||'')}</textarea>
         </div>
       </div>`;
-    }
-    return `
-    <div class="news-card reveal">
-      <div class="news-top">
-        <span class="news-badge">📰 Новость</span>
-        <span class="news-date">${esc(formatDate(n.date))}</span>
-      </div>
-      <div class="news-title">${esc(n.title||'Без названия')}</div>
-      ${n.text ? `<div class="news-text">${esc(n.text)}</div>` : ''}
-    </div>`;
   }).join('');
 }
-function renderAll(d){
-  renderGrid('men-grid', d.men || FALLBACK.men);
-  renderGrid('women-grid', d.women || FALLBACK.women);
-  renderNews(d.news || FALLBACK.news);
-  document.getElementById('coach-name').textContent = d.coach || FALLBACK.coach;
-  observeReveals();
+function updateNews(i, field, val){ state.news[i][field] = val; }
+function setNewsType(i, type){
+  state.news[i].type = type;
+  if(type === 'match') state.news[i].home = state.news[i].home ?? true;
+  renderNews();
 }
+function addNews(type){
+  state.news.unshift({
+    type: type, date: new Date().toISOString().slice(0,10),
+    title: '', text: '', opponent: '', time: '', place: '', home: type === 'match'
+  });
+  renderNews();
+}
+function removeNews(i){
+  if(!confirm('Удалить запись?')) return;
+  state.news.splice(i,1);
+  renderNews();
+}
+
+// Загрузка данных из Supabase
 async function loadData(){
   try{
-    const r = await fetch('/api/data',{cache:'no-store'});
-    if(!r.ok) throw 0;
-    renderAll(await r.json());
-  }catch(e){ renderAll(FALLBACK); }
-}
-loadData();
-
-let io;
-function observeReveals(){
-  if(io) io.disconnect();
-  io = new IntersectionObserver((entries)=>{
-    entries.forEach((en,i)=>{
-      if(en.isIntersecting){
-        setTimeout(()=>en.target.classList.add('in'), (i%6)*60);
-        io.unobserve(en.target);
-      }
-    });
-  },{threshold:.12,rootMargin:"0px 0px -60px 0px"});
-  document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
+    setStatus('Загрузка...');
+    const { data: players } = await db.from('players').select('*');
+    const { data: news } = await db.from('news').select('*');
+    const { data: config } = await db.from('config').select('*').eq('id', 1).single();
+    
+    state = {
+      men: players ? players.filter(p => p.team === 'men').sort((a,b)=>a.number-b.number) : [],
+      women: players ? players.filter(p => p.team === 'women').sort((a,b)=>a.number-b.number) : [],
+      news: news || [],
+      coach: config?.coach || ''
+    };
+    
+    document.getElementById('coach').value = state.coach;
+    renderList('men'); renderList('women'); renderNews();
+    setStatus('Данные загружены');
+  }catch(e){ setStatus('Ошибка загрузки', false); }
 }
 
-const header = document.getElementById('header');
-const progress = document.getElementById('progress');
-window.addEventListener('scroll', ()=>{
-  const h = document.documentElement.scrollHeight - window.innerHeight;
-  progress.style.width = (window.scrollY/h*100)+'%';
-  header.classList.toggle('scrolled', window.scrollY > 40);
-},{passive:true});
-document.getElementById('year').textContent = new Date().getFullYear();
+// Сохранение данных в Supabase
+async function save(){
+  state.coach = document.getElementById('coach').value.trim();
+  state.men = state.men.filter(p=>p.name.trim());
+  state.women = state.women.filter(p=>p.name.trim());
+  state.news = state.news.filter(n => (n.title||'').trim() || (n.text||'').trim() || (n.opponent||'').trim());
 
-/* ============================================================
-   ПАРАЛЛАКС ФОНОВЫХ БЛИКОВ — двигаются при скролле
-   ============================================================ */
-(function(){
-  const b1 = document.querySelector('.blob-1');
-  const b2 = document.querySelector('.blob-2');
-  const b3 = document.querySelector('.blob-3');
-  let lastY = 0, currentOffset = 0, targetOffset = 0;
-  let mx = 0, my = 0;
+  setStatus('Сохраняем...');
+  
+  try{
+    // Очищаем старые данные
+    await db.from('players').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await db.from('news').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
-  window.addEventListener('scroll', ()=>{
-    targetOffset = window.scrollY;
-  },{passive:true});
-
-  window.addEventListener('mousemove', e=>{
-    mx = (e.clientX/innerWidth - 0.5);
-    my = (e.clientY/innerHeight - 0.5);
-  },{passive:true});
-
-  function tick(){
-    // Плавное догоняние позиции скролла
-    currentOffset += (targetOffset - currentOffset) * 0.06;
-
-    // Каждый блик двигается со своей скоростью и направлением
-    // (параллакс — чем дальше вниз, тем сильнее сдвиг)
-    b1.style.transform = `translate3d(${currentOffset * -0.08 + mx * -40}px, ${currentOffset * -0.22 + my * -40}px, 0)`;
-    b2.style.transform = `translate3d(${currentOffset * 0.10 + mx * 30}px, ${currentOffset * -0.15 + my * 30}px, 0)`;
-    b3.style.transform = `translate3d(calc(-50% + ${currentOffset * 0.14 + mx * 50}px), calc(-50% + ${currentOffset * 0.18 + my * 50}px), 0)`;
-
-    requestAnimationFrame(tick);
-  }
-  tick();
-})();
-
-/* ============================================================
-   THREE.JS — VL-100 BALL
-   ============================================================ */
-(function(){
-  const canvas = document.getElementById('bg');
-  const scene = new THREE.Scene();
-
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-  const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 100);
-  camera.position.set(0, 0, isMobile ? 6.8 : 6.0);
-
-  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.outputEncoding = THREE.sRGBEncoding;
-
-  function roundRect(ctx,x,y,w,h,r){
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);
-    ctx.arcTo(x+w,y,x+w,y+h,r);
-    ctx.arcTo(x+w,y+h,x,y+h,r);
-    ctx.arcTo(x,y+h,x,y,r);
-    ctx.arcTo(x,y,x+w,y,r);
-    ctx.closePath();
-  }
-
-  function makeVL100Texture(){
-    const W = 2048, H = 1024;
-    const c = document.createElement('canvas');
-    c.width = W; c.height = H;
-    const ctx = c.getContext('2d');
-
-    ctx.fillStyle = '#f8f8fa';
-    ctx.fillRect(0,0,W,H);
-
-    const BLUE = '#142a7c';
-    const BLUE_DARK = '#0d1c56';
-    ctx.fillStyle = BLUE;
-
-    for(let i=0; i<3; i++){
-      const cx = (i + 0.5) * (W/3);
-      const maxHalf = W * 0.115;
-      const waveAmp = W * 0.02;
-      ctx.beginPath();
-      for(let y=0; y<=H; y+=4){
-        const t = y/H;
-        const env = Math.sin(t * Math.PI);
-        const wave = Math.sin(t * Math.PI * 2) * waveAmp;
-        const x = cx + maxHalf * env + wave;
-        y===0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      for(let y=H; y>=0; y-=4){
-        const t = y/H;
-        const env = Math.sin(t * Math.PI);
-        const wave = Math.sin(t * Math.PI * 2) * waveAmp;
-        const x = cx - maxHalf * env + wave;
-        ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.fill();
+    // Готовим новые данные (удаляем id, чтобы база сгенерировала новые)
+    const menData = state.men.map(p => ({name: p.name, number: p.number, position: p.position, team: 'men'}));
+    const womenData = state.women.map(p => ({name: p.name, number: p.number, position: p.position, team: 'women'}));
+    
+    // Вставляем новые данные
+    if(menData.length || womenData.length) {
+      const { error: pError } = await db.from('players').insert([...menData, ...womenData]);
+      if(pError) throw pError;
     }
-
-    ctx.save();
-    ctx.globalAlpha = 0.25;
-    ctx.strokeStyle = BLUE_DARK;
-    ctx.lineWidth = 5;
-    for(let i=0; i<3; i++){
-      const cx = (i + 0.5) * (W/3);
-      const maxHalf = W * 0.115;
-      const waveAmp = W * 0.02;
-      [1,-1].forEach(dir=>{
-        ctx.beginPath();
-        for(let y=0; y<=H; y+=6){
-          const t = y/H;
-          const env = Math.sin(t * Math.PI);
-          const wave = Math.sin(t * Math.PI * 2) * waveAmp;
-          const x = cx + dir * maxHalf * env + wave;
-          y===0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+    
+    if(state.news.length) {
+      const cleanNews = state.news.map(n => {
+        return {
+          type: n.type, date: n.date, title: n.title, text: n.text,
+          opponent: n.opponent, time: n.time, place: n.place, home: n.home
+        };
       });
+      const { error: nError } = await db.from('news').insert(cleanNews);
+      if(nError) throw nError;
     }
-    ctx.restore();
+    
+    // Обновляем тренера
+    await db.from('config').update({ coach: state.coach }).eq('id', 1);
 
-    for(let i=0; i<3; i++){
-      const cxLogo = i * (W/3) + W/6;
-      drawVFVLogo(ctx, cxLogo, H * 0.42);
-      const cxVL = (i + 0.5) * (W/3);
-      drawVL100(ctx, cxVL, H * 0.72);
-    }
-
-    const tex = new THREE.CanvasTexture(c);
-    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    tex.encoding = THREE.sRGBEncoding;
-    return tex;
+    setStatus('✓ Сохранено');
+  }catch(e){ 
+    console.error(e);
+    setStatus('Ошибка: ' + e.message, false); 
   }
-
-  function drawVFVLogo(ctx, cx, cy){
-    const flagW = 90, flagH = 62;
-    const textSize = 92;
-    const gap = 26;
-    ctx.save();
-    ctx.textBaseline = 'middle';
-    ctx.font = `900 ${textSize}px "Arial Black", Arial, sans-serif`;
-    const textW = ctx.measureText('ВФВ').width;
-    const totalW = flagW + gap + textW;
-    const startX = cx - totalW/2;
-    const fx = startX, fy = cy - flagH/2;
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(fx, fy, flagW, flagH/3);
-    ctx.fillStyle = '#0039a6'; ctx.fillRect(fx, fy + flagH/3, flagW, flagH/3);
-    ctx.fillStyle = '#d52b1e'; ctx.fillRect(fx, fy + flagH*2/3, flagW, flagH/3);
-    ctx.strokeStyle = '#0a0a0f'; ctx.lineWidth = 3;
-    ctx.strokeRect(fx, fy, flagW, flagH);
-    ctx.fillStyle = '#142a7c';
-    ctx.lineWidth = 4; ctx.strokeStyle = '#0a0a0f';
-    ctx.strokeText('ВФВ', fx + flagW + gap, cy + 4);
-    ctx.fillText('ВФВ', fx + flagW + gap, cy + 4);
-    const pillW = 480, pillH = 58;
-    const px = cx - pillW/2;
-    const py = cy + flagH/2 + 22;
-    ctx.fillStyle = '#d52b1e';
-    roundRect(ctx, px, py, pillW, pillH, 12);
-    ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '900 30px "Arial Black", Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('ОФИЦИАЛЬНЫЙ МЯЧ', cx, py + pillH/2 + 1);
-    ctx.restore();
-  }
-
-  function drawVL100(ctx, cx, cy){
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = '900 140px "Arial Black", Arial, sans-serif';
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = '#0d1c56';
-    ctx.strokeText('VL-100', cx, cy);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText('VL-100', cx, cy);
-    ctx.restore();
-  }
-
-  const geo = new THREE.SphereGeometry(2.15, 128, 128);
-  const mat = new THREE.MeshPhongMaterial({
-    map: makeVL100Texture(),
-    shininess: 70,
-    specular: 0x666677,
-    transparent: true,
-    opacity: 0.95
-  });
-  const ball = new THREE.Mesh(geo, mat);
-  scene.add(ball);
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(4, 6, 5); scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffe4cc, 0.9); fill.position.set(-5, 2, 3); scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xff6b1a, 1.3); rim.position.set(-4, -3, -4); scene.add(rim);
-  const back = new THREE.DirectionalLight(0xffffff, 0.5); back.position.set(0, -3, -5); scene.add(back);
-
-  function getVisibleHalfWidth(){
-    const vFov = camera.fov * Math.PI / 180;
-    const height = 2 * Math.tan(vFov / 2) * camera.position.z;
-    return (height * camera.aspect) / 2;
-  }
-
-  let lastScroll = window.scrollY;
-  let scrollVelocity = 0;
-  let currentX = -3;
-  let mx = 0, my = 0;
-
-  window.addEventListener('scroll', ()=>{
-    const y = window.scrollY;
-    scrollVelocity += (y - lastScroll) * 0.10;
-    lastScroll = y;
-  },{passive:true});
-
-  window.addEventListener('mousemove', e=>{
-    mx = (e.clientX/innerWidth - 0.5);
-    my = (e.clientY/innerHeight - 0.5);
-  },{passive:true});
-
-  window.addEventListener('touchmove', e=>{
-    if(e.touches[0]){
-      mx = (e.touches[0].clientX/innerWidth - 0.5);
-      my = (e.touches[0].clientY/innerHeight - 0.5);
-    }
-  },{passive:true});
-
-  function animate(){
-    requestAnimationFrame(animate);
-
-    const halfW = getVisibleHalfWidth();
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const ratio = Math.min(window.scrollY / maxScroll, 1);
-    const targetX = -halfW - 0.6 - ratio * 2.8;
-
-    currentX += (targetX - currentX) * 0.08;
-    ball.position.x = currentX;
-
-    ball.rotation.y += 0.014 + scrollVelocity * 0.008;
-    ball.rotation.x += 0.0015 + scrollVelocity * 0.0012;
-    ball.rotation.z += 0.0006;
-    scrollVelocity *= 0.9;
-
-    const t = performance.now() * 0.001;
-    ball.position.y = Math.sin(t * 0.7) * 0.14 + my * -0.5;
-
-    const s = 1 + Math.sin(t * 1.1) * 0.012;
-    ball.scale.setScalar(s);
-
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  let rzT;
-  window.addEventListener('resize', ()=>{
-    clearTimeout(rzT);
-    rzT = setTimeout(()=>{
-      camera.aspect = innerWidth/innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(innerWidth, innerHeight);
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-      const mob = window.matchMedia('(max-width: 768px)').matches;
-      camera.position.z = mob ? 6.8 : 6.0;
-    }, 120);
-  });
-})();
+}
 </script>
 </body>
 </html>
