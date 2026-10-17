@@ -303,10 +303,7 @@ const FALLBACK = {
     {name:"Горбунова Екатерина",number:17,position:"Центральный блокирующий"},
     {name:"Обидина Мария",number:19,position:"Диагональный"}
   ],
-  news: [
-    {type:"match",date:"2025-11-20",title:"Товарищеский матч",opponent:"СШ №7",time:"18:00",place:"Спортзал школы №91",home:true,text:"Приходите поддержать нашу мужскую команду!"},
-    {type:"news",date:"2025-11-10",title:"Победа на городском турнире",text:"Женская команда ВК Феникс заняла первое место на турнире среди школ Нижнего Новгорода!"}
-  ]
+  news: []
 };
 
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
@@ -401,7 +398,32 @@ async function loadData(){
     renderAll(FALLBACK); 
   }
 }
+
+// 1. Загружаем данные при старте
 loadData();
+
+// 2. ВКЛЮЧАЕМ РЕАЛЬНОЕ ВРЕМЯ (Слушаем изменения в базе)
+db.channel('schema-db-changes')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'news' }, payload => {
+    console.log('Новости обновлены!', payload);
+    loadData(); // Перезагружаем данные
+  })
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, payload => {
+    console.log('Составы обновлены!', payload);
+    loadData();
+  })
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'config' }, payload => {
+    console.log('Тренер обновлен!', payload);
+    loadData();
+  })
+  .subscribe();
+
+// 3. Дополнительная страховка: если пользователь переключил вкладку и вернулся, обновляем данные
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    loadData();
+  }
+});
 
 let io;
 function observeReveals(){
