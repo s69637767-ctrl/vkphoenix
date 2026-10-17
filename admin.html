@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дашборд — ВК Феникс</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:'Manrope',system-ui,sans-serif;background:#07070c;color:#fff;margin:0;padding:24px;min-height:100vh;font-size:15px}
+h1{font-size:1.6rem;margin:0 0 24px;background:linear-gradient(135deg,#ff8c42,#ff6b1a);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:.95rem;text-transform:uppercase;letter-spacing:.15em;color:#8a8aa0;margin:0 0 16px;font-weight:800}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:22px;margin-bottom:16px}
+input,button,textarea,select{font:inherit;padding:11px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#13131c;color:#fff;outline:none;transition:border-color .2s;width:100%}
+input:focus,textarea:focus,select:focus{border-color:#ff6b1a}
+textarea{resize:vertical;min-height:70px;font-family:inherit;line-height:1.5}
+select{cursor:pointer}
+button{background:linear-gradient(135deg,#ff6b1a,#c63a00);border:none;cursor:pointer;font-weight:800;color:#fff;padding:12px 22px;transition:all .2s;width:auto}
+button:hover{transform:translateY(-2px);box-shadow:0 10px 24px -8px #ff6b1a}
+button.ghost{background:transparent;border:1px solid rgba(255,255,255,.18);color:#fff}
+button.danger{background:linear-gradient(135deg,#ff2e63,#c60038)}
+button.add{background:transparent;border:1.5px dashed rgba(255,255,255,.25);color:#8a8aa0;margin-top:14px;width:100%;padding:14px}
+button.add:hover{background:rgba(255,107,26,.1);border-color:#ff6b1a;color:#ff8c42;transform:none;box-shadow:none}
+.row{display:grid;grid-template-columns:80px 1fr 1fr 44px;gap:8px;margin-bottom:8px}
+.row button{padding:0;font-size:1.15rem;height:auto}
+.status{padding:8px 16px;border-radius:100px;font-size:.82rem;font-weight:800;display:inline-block;backdrop-filter:blur(10px)}
+.status.ok{background:rgba(40,200,100,.18);color:#4de08a;border:1px solid rgba(60,200,100,.35)}
+.status.err{background:rgba(255,46,99,.18);color:#ff5678;border:1px solid rgba(255,46,99,.35)}
+.hidden{display:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:10px 18px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#8a8aa0;cursor:pointer;font-weight:800;font-size:.85rem;transition:all .2s;text-transform:uppercase;letter-spacing:.1em}
+.tab.active{background:#ff6b1a;color:#fff;border-color:#ff6b1a}
+.tab:hover:not(.active){color:#fff;border-color:rgba(255,107,26,.4)}
+.news-item{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px;margin-bottom:12px;background:rgba(255,255,255,.02);position:relative}
+.news-item.match{border-color:rgba(255,107,26,.4);background:rgba(255,107,26,.06)}
+.news-item .news-head{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.news-item .news-head select{width:auto;min-width:130px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:.75rem;color:#8a8aa0;text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:6px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .row{grid-template-columns:60px 1fr 44px;gap:6px}
+  .row .pos-input{grid-column:1/-1}
+}
+.checkbox{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 0}
+.checkbox input{width:auto;cursor:pointer;accent-color:#ff6b1a;transform:scale(1.2)}
+.section-block{display:none}
+.section-block.active{display:block}
+.save-bar{position:sticky;bottom:16px;background:rgba(7,7,12,.92);backdrop-filter:blur(14px);padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;z-index:20;margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>⚙️ ВК Феникс — Дашборд</h1>
+  <span id="status" class="status hidden"></span>
+</div>
+
+<div id="login" class="card">
+  <h2 style="margin-top:0">Вход</h2>
+  <input id="email" type="email" placeholder="Email администратора" style="max-width:320px; margin-bottom:10px;">
+  <input id="pass" type="password" placeholder="Пароль" style="max-width:320px; margin-bottom:12px;">
+  <button onclick="login()">Войти</button>
+</div>
+
+<div id="panel" class="hidden">
+  <div class="tabs">
+    <div class="tab active" data-tab="news-tab">📰 Новости и игры</div>
+    <div class="tab" data-tab="teams-tab">🏐 Команды</div>
+    <div class="tab" data-tab="coach-tab">🏆 Тренер</div>
+  </div>
+
+  <div id="news-tab" class="section-block active">
+    <div class="card">
+      <h2>Новости и анонсы матчей</h2>
+      <p style="color:#8a8aa0;font-size:.9rem;margin:0 0 16px">
+        Добавляйте новости и игры — они сразу появятся на сайте. Свежие события показываются первыми.
+      </p>
+      <div id="news-list"></div>
+      <button class="add" onclick="addNews('news')">+ Добавить новость</button>
+      <button class="add" onclick="addNews('match')">+ Добавить матч</button>
+    </div>
+  </div>
+
+  <div id="teams-tab" class="section-block">
+    <div class="card">
+      <h2>🔵 Мужская команда</h2>
+      <div id="men-list"></div>
+      <button class="add" onclick="addPlayer('men')">+ Добавить игрока</button>
+    </div>
+    <div class="card">
+      <h2>🔴 Женская команда</h2>
+      <div id="women-list"></div>
+      <button class="add" onclick="addPlayer('women')">+ Добавить игрока</button>
+    </div>
+  </div>
+
+  <div id="coach-tab" class="section-block">
+    <div class="card">
+      <h2>🏆 Главный тренер</h2>
+      <div class="field">
+        <label>ФИО тренера</label>
+        <input id="coach" placeholder="Например: Гунин А. С.">
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button class="ghost" onclick="loadData()">↻ Перезагрузить</button>
+    <button onclick="save()">💾 Сохранить изменения</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ВАШИ КЛЮЧИ SUPABASE
+const SUPABASE_URL = 'https://miczupcyeakbvyizqcfy.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_hMT9V3f03fmdr_CKCrT36w_zCDB8adx';
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let state = {men:[], women:[], coach:"", news:[]};
+
+function setStatus(msg, ok=true){
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + (ok?'ok':'err');
+  el.classList.remove('hidden');
+  clearTimeout(setStatus.t);
+  setStatus.t = setTimeout(()=>el.classList.add('hidden'), 3000);
+}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.section-block').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab).classList.add('active');
+  };
+});
+
+// Вход
+async function login(){
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('pass').value.trim();
+  if(!email || !pass) return;
+  
+  setStatus('Входим...');
+  const { error } = await db.auth.signInWithPassword({ email, password: pass });
+  
+  if(error) {
+    setStatus('Ошибка: ' + error.message, false);
+  } else {
+    setStatus('Успешный вход!');
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('panel').classList.remove('hidden');
+    loadData();
+  }
+}
+
+// Рендер игроков
+function renderList(team){
+  const el = document.getElementById(team+'-list');
+  el.innerHTML = state[team].map((p,i)=>`
+    <div class="row">
+      <input type="number" value="${p.number}" onchange="update('${team}',${i},'number',this.value)" placeholder="#">
+      <input value="${esc(p.name)}" onchange="update('${team}',${i},'name',this.value)" placeholder="Имя">
+      <input class="pos-input" value="${esc(p.position)}" onchange="update('${team}',${i},'position',this.value)" placeholder="Амплуа">
+      <button class="danger" onclick="removePlayer('${team}',${i})">×</button>
+    </div>`).join('');
+}
+function update(team, i, field, val){
+  state[team][i][field] = field === 'number' ? parseInt(val)||0 : val;
+}
+function addPlayer(team){
+  state[team].push({name:'', number:0, position:''});
+  renderList(team);
+}
+function removePlayer(team, i){
+  if(!confirm('Удалить игрока?')) return;
+  state[team].splice(i,1);
+  renderList(team);
+}
+
+// Рендер новостей
+function renderNews(){
+  const el = document.getElementById('news-list');
+  if(!state.news.length){
+    el.innerHTML = '<div style="text-align:center;color:#8a8aa0;padding:24px">Пока пусто. Добавьте первую новость или матч 👇</div>';
+    return;
+  }
+  const sorted = [...state.news].map((n,idx)=>({n,idx})).sort((a,b)=>{
+    const da = a.n.date ? new Date(a.n.date) : 0;
+    const db = b.n.date ? new Date(b.n.date) : 0;
+    return db - da;
+  });
+  el.innerHTML = sorted.map(({n,idx})=>{
+    const i = idx;
+    const isMatch = n.type === 'match';
+    return `
+      <div class="news-item ${isMatch?'match':''}">
+        <div class="news-head">
+          <select onchange="setNewsType(${i}, this.value)">
+            <option value="news" ${!isMatch?'selected':''}>📰 Новость</option>
+            <option value="match" ${isMatch?'selected':''}>🎯 Матч</option>
+          </select>
+          <input type="date" value="${esc(n.date||'')}" onchange="updateNews(${i},'date',this.value)" style="max-width:180px">
+          <button class="danger" style="margin-left:auto;padding:8px 14px;font-size:.9rem" onclick="removeNews(${i})">Удалить</button>
+        </div>
+        ${isMatch ? `
+          <div class="grid-2">
+            <div class="field"><label>Соперник</label>
+              <input value="${esc(n.opponent||'')}" onchange="updateNews(${i},'opponent',this.value)" placeholder="СШ №7"></div>
+            <div class="field"><label>Название (необязательно)</label>
+              <input value="${esc(n.title||'')}" onchange="updateNews(${i},'title',this.value)" placeholder="Товарищеский матч"></div>
+          </div>
+          <div class="grid-3">
+            <div class="field"><label>Время</label>
+              <input type="time" value="${esc(n.time||'')}" onchange="updateNews(${i},'time',this.value)"></div>
+            <div class="field" style="grid-column:span 2"><label>Место</label>
+              <input value="${esc(n.place||'')}" onchange="updateNews(${i},'place',this.value)" placeholder="Спортзал школы №91"></div>
+          </div>
+          <label class="checkbox">
+            <input type="checkbox" ${n.home?'checked':''} onchange="updateNews(${i},'home',this.checked)">
+            Домашний матч (иначе — выездной)
+          </label>
+        ` : `
+          <div class="field"><label>Заголовок</label>
+            <input value="${esc(n.title||'')}" onchange="updateNews(${i},'title',this.value)" placeholder="Победа на турнире"></div>
+        `}
+        <div class="field"><label>Описание</label>
+          <textarea onchange="updateNews(${i},'text',this.value)" placeholder="${isMatch?'Приходите поддержать команду!':'Текст новости…'}">${esc(n.text||'')}</textarea>
+        </div>
+      </div>`;
+  }).join('');
+}
+function updateNews(i, field, val){ state.news[i][field] = val; }
+function setNewsType(i, type){
+  state.news[i].type = type;
+  if(type === 'match') state.news[i].home = state.news[i].home ?? true;
+  renderNews();
+}
+function addNews(type){
+  state.news.unshift({
+    type: type, date: new Date().toISOString().slice(0,10),
+    title: '', text: '', opponent: '', time: '', place: '', home: type === 'match'
+  });
+  renderNews();
+}
+function removeNews(i){
+  if(!confirm('Удалить запись?')) return;
+  state.news.splice(i,1);
+  renderNews();
+}
+
+// Загрузка данных из Supabase
+async function loadData(){
+  try{
+    setStatus('Загрузка...');
+    const { data: players } = await db.from('players').select('*');
+    const { data: news } = await db.from('news').select('*');
+    const { data: config } = await db.from('config').select('*').eq('id', 1).single();
+    
+    state = {
+      men: players ? players.filter(p => p.team === 'men').sort((a,b)=>a.number-b.number) : [],
+      women: players ? players.filter(p => p.team === 'women').sort((a,b)=>a.number-b.number) : [],
+      news: news || [],
+      coach: config?.coach || ''
+    };
+    
+    document.getElementById('coach').value = state.coach;
+    renderList('men'); renderList('women'); renderNews();
+    setStatus('Данные загружены');
+  }catch(e){ setStatus('Ошибка загрузки', false); }
+}
+
+// Сохранение данных в Supabase
+async function save(){
+  state.coach = document.getElementById('coach').value.trim();
+  state.men = state.men.filter(p=>p.name.trim());
+  state.women = state.women.filter(p=>p.name.trim());
+  state.news = state.news.filter(n => (n.title||'').trim() || (n.text||'').trim() || (n.opponent||'').trim());
+
+  setStatus('Сохраняем...');
+  
+  try{
+    // Очищаем старые данные
+    await db.from('players').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await db.from('news').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
+    // Готовим новые данные (удаляем id, чтобы база сгенерировала новые)
+    const menData = state.men.map(p => ({name: p.name, number: p.number, position: p.position, team: 'men'}));
+    const womenData = state.women.map(p => ({name: p.name, number: p.number, position: p.position, team: 'women'}));
+    
+    // Вставляем новые данные
+    if(menData.length || womenData.length) {
+      const { error: pError } = await db.from('players').insert([...menData, ...womenData]);
+      if(pError) throw pError;
+    }
+    
+    if(state.news.length) {
+      const cleanNews = state.news.map(n => {
+        return {
+          type: n.type, date: n.date, title: n.title, text: n.text,
+          opponent: n.opponent, time: n.time, place: n.place, home: n.home
+        };
+      });
+      const { error: nError } = await db.from('news').insert(cleanNews);
+      if(nError) throw nError;
+    }
+    
+    // Обновляем тренера
+    await db.from('config').update({ coach: state.coach }).eq('id', 1);
+
+    setStatus('✓ Сохранено');
+  }catch(e){ 
+    console.error(e);
+    setStatus('Ошибка: ' + e.message, false); 
+  }
+}
+</script>
+</body>
+</html>
